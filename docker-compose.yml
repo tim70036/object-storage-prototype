@@ -12,7 +12,7 @@ x-base-config: &base-config
   #   - 9001:9001
   environment:
     MINIO_ROOT_USER: minioadmin
-    MINIO_ROOT_PASSWORD: minioadmin
+    MINIO_ROOT_PASSWORD: qwer1234
   # healthcheck:
   #   test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
   #   interval: 30s
@@ -23,59 +23,59 @@ x-base-config: &base-config
 # using nginx reverse proxy, load balancing, you can access
 # it through port 9000.
 services:
-  # minio1:
-  #   <<: *base-config
-  #   hostname: minio1
-  #   volumes:
-  #     - type: volume
-  #       source: data1-1
-  #       target: /data1
-  #     - type: volume
-  #       source: data1-2
-  #       target: /data2
-  #   # ports:
-  #   #   - 9000:9000
-  #   #   - 9001:9001
-  #   networks:
-  #     - backend
-
-  # minio2:
-  #   <<: *base-config
-  #   hostname: minio2
-  #   volumes:
-  #     - type: volume
-  #       source: data2-1
-  #       target: /data1
-  #     - type: volume
-  #       source: data2-2
-  #       target: /data2
-  #   networks:
-  #     - backend
-
-  dummy:
-    image: jasonrm/dummy-server
-    hostname: dummy
-    ports:
-      - 8080:8080
-    networks:
-      - backend
-
-  envoy:
-    image: envoyproxy/envoy:v1.21-latest
-    command:
-      - '--config-path /etc/envoy/envoy.yml'
-      - '--log-level trace'
+  minio1:
+    <<: *base-config
+    hostname: minio1
     volumes:
-      - type: bind
-        source: ./envoy.yml
-        target: /etc/envoy/envoy.yml
+      - type: volume
+        source: data1-1
+        target: /data1
+      - type: volume
+        source: data1-2
+        target: /data2
     ports:
-      - 10000:10000
-      - 9901:9901
+      - 9000:9000
+      - 9001:9001
     networks:
       - backend
-    depends_on:
-      - dummy
+
+  minio2:
+    <<: *base-config
+    hostname: minio2
+    volumes:
+      - type: volume
+        source: data2-1
+        target: /data1
+      - type: volume
+        source: data2-2
+        target: /data2
+    networks:
+      - backend
+
+  # dummy:
+  #   image: jasonrm/dummy-server
+  #   hostname: dummy
+  #   ports:
+  #     - 8080:8080
+  #   networks:
+  #     - backend
+
+  # envoy:
+  #   image: envoyproxy/envoy:v1.21-latest
+  #   command:
+  #     - '--config-path /etc/envoy/envoy.yml'
+  #     - '--log-level trace'
+  #   volumes:
+  #     - type: bind
+  #       source: ./envoy.yml
+  #       target: /etc/envoy/envoy.yml
+  #   ports:
+  #     - 10000:10000
+  #     - 9901:9901
+  #   networks:
+  #     - backend
+  #   depends_on:
+  #     - dummy
 ## By default this config uses default local driver,
 ## For custom volumes replace with volume driver configuration.
 volumes:
