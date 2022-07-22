@@ -1,24 +1,25 @@
 import http from 'k6/http';
 import { sleep } from 'k6';
+import { Counter } from 'k6/metrics';
 
 export const options = {
   scenarios: {
-    // one: {
-    //   executor: 'per-vu-iterations',
-    //   vus: 1,
-    //   iterations: 1,
-    //   maxDuration: '10m',
-    // },
-    peak: {
-      executor: 'ramping-vus',
-      startVUs: 1,
-      stages: [
-        { duration: '10s', target: 50 }, // ramp up
-        { duration: '1m', target: 50 }, // stay
-        { duration: '10s', target: 0 }, // scale down. (optional)
-      ],
-      gracefulRampDown: '10s',
+    one: {
+      executor: 'per-vu-iterations',
+      vus: 10,
+      iterations: 10,
+      maxDuration: '15m',
     },
+    // peak: {
+    //   executor: 'ramping-vus',
+    //   startVUs: 1,
+    //   stages: [
+    //     { duration: '10s', target: 50 }, // ramp up
+    //     { duration: '1m', target: 50 }, // stay
+    //     { duration: '10s', target: 0 }, // scale down. (optional)
+    //   ],
+    //   gracefulRampDown: '10s',
+    // },
   },
 
   // For Unity client, 1 user has max 10 concurrent request (defined in addressable asset)
@@ -27,9 +28,18 @@ export const options = {
 
   discardResponseBodies: true, //  Lessens the amount of memory required and the amount of GC - reducing the load on the testing machine, and probably producing more reliable test results.
 
-  noConnectionReuse: false, // Whether a connection is reused throughout different actions of the same virtual user and in the same iteration.
+  noConnectionReuse: true, // Whether a connection is reused throughout different actions of the same virtual user and in the same iteration.
   noVUConnectionReuse: true, // Whether k6 should reuse TCP connections between iterations of a VU.
+
+  dns: {
+    ttl: '0',
+    select: 'random',
+    policy: 'preferIPv4',
+  },
 };
+
+const minio1Counter = new Counter('minio1');
+const minio2Counter = new Counter('minio2');
 
 const hostUrl = 'http://oss-dev.game-soul-swe.com:9000';
 
@@ -44,12 +54,8 @@ export default function () {
     ['GET', `${hostUrl}/lom-dev-1/asset/feature-cicd-minio/1.2.1/Android/bankerdice_assets_all_26e2db9403d90f3a9ec11cb6f95239aa.bundle`],
     ['GET', `${hostUrl}/lom-dev-1/asset/feature-cicd-minio/1.2.1/Android/bracelet_assets_all_9015e2126990b7cb5adb41093839b810.bundle`],
     ['GET', `${hostUrl}/lom-dev-1/asset/feature-cicd-minio/1.2.1/Android/cardsets_assets_all_830b8a8dca98d3ecbeac1913f674ac6a.bundle`],
-    ['GET', `${hostUrl}/lom-dev-1/asset/feature-cicd-minio/1.2.1/Android/catalog_2022.07.19.15.55.31.hash`],
-    ['GET', `${hostUrl}/lom-dev-1/asset/feature-cicd-minio/1.2.1/Android/catalog_2022.07.19.15.55.31.json`],
-    ['GET', `${hostUrl}/lom-dev-1/asset/feature-cicd-minio/1.2.1/Android/catalog_2022.07.19.15.56.26.hash`],
-    ['GET', `${hostUrl}/lom-dev-1/asset/feature-cicd-minio/1.2.1/Android/catalog_2022.07.19.15.56.26.json`],
-    ['GET', `${hostUrl}/lom-dev-1/asset/feature-cicd-minio/1.2.1/Android/catalog_2022.07.19.17.51.41.hash`],
-    ['GET', `${hostUrl}/lom-dev-1/asset/feature-cicd-minio/1.2.1/Android/catalog_2022.07.19.17.51.41.json`],
+    ['GET', `${hostUrl}/lom-dev-1/asset/feature-cicd-minio/1.2.1/Android/catalog_2022.07.21.09.58.33.hash`],
+    ['GET', `${hostUrl}/lom-dev-1/asset/feature-cicd-minio/1.2.1/Android/catalog_2022.07.21.09.58.33.json`],
     ['GET', `${hostUrl}/lom-dev-1/asset/feature-cicd-minio/1.2.1/Android/club-ui_assets_all_84c7cc2ba89e87196ef826ad6ca58d6b.bundle`],
     ['GET', `${hostUrl}/lom-dev-1/asset/feature-cicd-minio/1.2.1/Android/cmj-3d_assets_all_397f6d057412e8c5b333a62323c3c421.bundle`],
     ['GET', `${hostUrl}/lom-dev-1/asset/feature-cicd-minio/1.2.1/Android/cmj-ui_assets_all_379d09933e563186cb5989a00173fd10.bundle`],
@@ -105,7 +111,9 @@ export default function () {
     ['GET', `${hostUrl}/lom-dev-1/asset/feature-cicd-minio/1.2.1/Android/watch_assets_all_6b15316bac5cf2ed9e1b32cc1b2444dc.bundle`],
     ['GET', `${hostUrl}/lom-dev-1/asset/feature-cicd-minio/1.2.1/Android/yablon-ui_assets_all_81df69afba350dd3dc722a1e5978eb38.bundle`],
   ]);
-  // console.log(res);
-  // console.log(` ip[${res.remote_ip}] status[${res.status}] dur[${res.timings.duration}]`);
+  res.forEach(element => {
+    if (element.remote_ip === '103.137.246.213') minio1Counter.add(1);
+    else if (element.remote_ip === '103.137.246.214') minio2Counter.add(1);
+  });
   sleep(0.1);
 }
