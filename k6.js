@@ -41,7 +41,7 @@ export const options = {
 const minio1Counter = new Counter('minio1');
 const minio2Counter = new Counter('minio2');
 
-const hostUrl = 'http://oss-dev.game-soul-swe.com:9000';
+const hostUrl = 'https://oss-dev.game-soul-swe.com:9000';
 
 export default function () {
   const res = http.batch([
