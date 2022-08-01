@@ -22,7 +22,7 @@ services:
       - http://minio{1...2}.game-soul-swe.com/data{1...2}
     environment:
       MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: H0TOolO56prn
+      MINIO_ROOT_PASSWORD: qwer1234
 
       MINIO_PROMETHEUS_AUTH_TYPE: public # Do not require that scraping clients authenticate their requests.
       MINIO_PROMETHEUS_URL: http://103.147.199.7:9090

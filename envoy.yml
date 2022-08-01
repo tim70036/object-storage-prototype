@@ -1,9 +1,11 @@
-admin:
-  address:
-    socket_address: { address: 0.0.0.0, port_value: 9901 }
+# Dangerous in production! Do not enable when not needed.
+# admin:
+#   address:
+#     socket_address: { address: 0.0.0.0, port_value: 9901 }
 
 static_resources:
   listeners:
+  # HTTP proxy requires more configuration (see best practice for envoy).
   # - name: listener_http
   #   address:
   #     socket_address: { address: 0.0.0.0, port_value: 8999 }
@@ -67,6 +69,7 @@ static_resources:
               "@type": type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxy
               stat_prefix: tcp_proxy
               cluster: minio_cluster
+              idle_timeout: 60s # The idle timeout is defined as the period in which there are no bytes sent or received on either the upstream or downstream connection. If not set, the default idle timeout is 1 hour. If set to 0s, the timeout will be disabled.
               access_log:
                 - name: gamesoulswe_tcp_access_log_stdout
                   typed_config:
@@ -89,6 +92,7 @@ static_resources:
               "@type": type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxy
               stat_prefix: tcp_proxy
               cluster: minio_cluster
+              idle_timeout: 60s #The idle timeout is defined as the period in which there are no bytes sent or received on either the upstream or downstream connection. If not set, the default idle timeout is 1 hour. If set to 0s, the timeout will be disabled.
               access_log:
                 - name: leagueofmahjong_tcp_access_log_stdout
                   typed_config:
@@ -104,7 +108,7 @@ static_resources:
 
   clusters:
   - name: minio_cluster
-    connect_timeout: 0.25s #?? default 5s
+    connect_timeout: 5s
     type: STATIC
     lb_policy: ROUND_ROBIN
     load_assignment:
@@ -116,4 +120,3 @@ static_resources:
               socket_address:
                 address: 127.0.0.1
                 port_value: 8787
-
