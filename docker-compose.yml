@@ -19,7 +19,7 @@ services:
       - :9001
       - --address
       - :8787
-      - http://minio{1...2}.game-soul-swe.com/data{1...2}
+      - http://minio{1...2}.leagueofmahjong.com/data{1...2}
     environment:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: H0TOolO56prn
@@ -46,7 +46,7 @@ services:
       image: envoyproxy/envoy:v1.23-latest
       command:
         - --config-path /etc/envoy/envoy.yml
-        # - '--log-level trace'
+        - --log-level debug
       volumes:
         - type: bind
           source: ./envoy.yml

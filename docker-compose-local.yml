@@ -41,7 +41,7 @@ services:
       image: envoyproxy/envoy:v1.23-latest
       command:
         - --config-path /etc/envoy/envoy.yml
-        # - '--log-level trace'
+        - --log-level debug
       volumes:
         - type: bind
           source: ./envoy.yml
