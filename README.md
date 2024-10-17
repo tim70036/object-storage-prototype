@@ -8,13 +8,15 @@ A breif overview of the deployment is shown below:
 
 ![alt](docs/arch.png)
 
+## **Prerequisites**
+
 - Have `docker` and `docker-compose` installed.
 - Have a keyboard for you to type command.
 - Chill enough.
 
-## Configuration
+## **Configuration**
 
-### Environment Variable
+### **Environment Variable**
 
 Docker will read environment variables from the `.env` file and use them to configure the application.
 This file is not committed to the repository and is used to store sensitive information such as API keys and secrets.
@@ -68,5 +70,3 @@ docker-compose logs -f # view logs
 
 Now you can access console at `http://[YOUR_DOMAIN_NAME]:9001` and login with the credentials you set in the `.env` file.
 The default API endpoint is `https://[YOUR_DOMAIN_NAME]:9000`.
-
-## **Load Testing Result**
