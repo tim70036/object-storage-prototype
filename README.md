@@ -16,11 +16,10 @@ A breif overview of the deployment is shown below:
 
 ## **Configuration**
 
-### **Environment Variable**
+### **Create .env File**
 
 Docker will read environment variables from the `.env` file and use them to configure the application.
-This file is not committed to the repository and is used to store sensitive information such as API keys and secrets.
-Here is an example of the `.env` file:
+This file is not committed to the repository and is used to store sensitive information such as API keys and secrets. Simply create a file named `.env` in the root directory of the project. Here is an example of the `.env` file:
 
 ```shell
 # Set the hosts and volumes MinIO uses at startup
